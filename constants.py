@@ -3,7 +3,7 @@ APP_NAME = "Djeja Simulator 💰🐔"
 APP_DESCRIPTION = "Daily trading compounding calculator with referral extra trades."
 
 # ===== Default Trading Parameters =====
-DEFAULT_STARTING_BALANCE = 2700.0
+DEFAULT_STARTING_BALANCE = 1000
 DEFAULT_PROFIT_PERCENT = 62.0
 DEFAULT_BASE_TRADES_PER_DAY = 2
 DEFAULT_DAYS = 90
