@@ -3,7 +3,7 @@ import pandas as pd
 from datetime import datetime, timedelta
 
 # ====== App Title ======
-st.title("Istekraz simalator 💰")
+st.title("Djeja Simulator 🐔 ")
 st.write("Daily trading compounding calculator with referral extra trades.")
 
 # ====== Inputs ======
