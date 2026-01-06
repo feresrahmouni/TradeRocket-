@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime, timedelta, time
 import pytz
+import plotly.express as px
 
 # ===== Timezone =====
 tz = pytz.timezone("Africa/Tunis")
@@ -21,17 +22,8 @@ mode = st.radio("Calculation Mode", ["Starting Balance ➜ Projection", "Target 
 st.write("---")
 
 # ===== Define trade time thresholds (Tunis time) =====
-# Each entry: (hour, minute) → trade active after this time
-trade_thresholds = [
-    time(13, 39),  # first base trade
-    time(18, 39),  # second base trade
-]
-
-# Bonus trades (only for first N days)
-bonus_thresholds = [
-    time(18, 49),  # first bonus
-    time(18, 59),  # second bonus
-]
+trade_thresholds = [time(13, 39), time(18, 39)]  # Base trades
+bonus_thresholds = [time(18, 49), time(18, 59)]  # Bonus trades
 
 # ===== Function to count trades today based on time =====
 def count_trades_today(day):
@@ -40,7 +32,7 @@ def count_trades_today(day):
     for t in trade_thresholds[:base_trades_per_day]:
         if now.time() >= t:
             trades += 1
-    # Bonus trades (only for first extra_trades_days)
+    # Bonus trades
     if day <= extra_trades_days:
         for t in bonus_thresholds[:extra_trades_per_day]:
             if now.time() >= t:
@@ -75,24 +67,48 @@ for day in range(1, days + 1):
     trades_today = count_trades_today(day)
     for _ in range(trades_today):
         balance += balance * 0.01 * (profit_percent_of_risk / 100)
+    daily_profit = balance - day_start
 
     rows.append({
-        "Date": (start_date + timedelta(days=day - 1)).isoformat(),
+        "Date": start_date + timedelta(days=day - 1),
         "Day": day,
         "Trades": trades_today,
-        "Daily Profit ($)": round(balance - day_start, 2),
+        "Daily Profit ($)": round(daily_profit, 2),
         "Balance ($)": round(balance, 2)
     })
 
 df = pd.DataFrame(rows)
 
-# ===== Display =====
+# ===== Display Table =====
 st.subheader("Projection Table")
 st.dataframe(df, use_container_width=True)
 
+# ===== Summary =====
 st.subheader("Summary")
 st.metric("Starting Balance", f"${starting_balance:,.2f}")
 st.metric("Final Balance", f"${balance:,.2f}")
 st.metric("Total Profit", f"${balance - starting_balance:,.2f}")
 
 st.info(f"Current Tunis time: {now.strftime('%H:%M')} → Trades today counted dynamically based on thresholds")
+
+# ===== Graphs =====
+st.subheader("Analytics & Graphs")
+
+# 1️⃣ Balance Over Time
+fig_balance = px.line(df, x="Date", y="Balance ($)", title="Balance Growth Over Time")
+st.plotly_chart(fig_balance, use_container_width=True)
+
+# 2️⃣ Daily Profit
+fig_profit = px.bar(df, x="Date", y="Daily Profit ($)", title="Daily Profit per Day", color="Daily Profit ($)")
+st.plotly_chart(fig_profit, use_container_width=True)
+
+# 3️⃣ Trades per Day
+fig_trades = px.line(df, x="Date", y="Trades", title="Number of Trades per Day", markers=True)
+st.plotly_chart(fig_trades, use_container_width=True)
+
+# ===== Extra Analytics =====
+st.subheader("Extra Analytics")
+st.write(f"- Average Daily Profit: ${df['Daily Profit ($)'].mean():.2f}")
+st.write(f"- Maximum Daily Profit: ${df['Daily Profit ($)'].max():.2f}")
+st.write(f"- Total Trades Projected: {df['Trades'].sum()}")
+st.write(f"- Average Trades per Day: {df['Trades'].mean():.2f}")
