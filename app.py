@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime, timedelta, time
 import pytz
-import plotly.express as px
 
 # ===== Timezone =====
 tz = pytz.timezone("Africa/Tunis")
@@ -32,7 +31,7 @@ def count_trades_today(day):
     for t in trade_thresholds[:base_trades_per_day]:
         if now.time() >= t:
             trades += 1
-    # Bonus trades
+    # Bonus trades (only for first extra_trades_days)
     if day <= extra_trades_days:
         for t in bonus_thresholds[:extra_trades_per_day]:
             if now.time() >= t:
@@ -73,8 +72,8 @@ for day in range(1, days + 1):
         "Date": start_date + timedelta(days=day - 1),
         "Day": day,
         "Trades": trades_today,
-        "Daily Profit ($)": round(daily_profit, 2),
-        "Balance ($)": round(balance, 2)
+        "Daily Profit": round(daily_profit, 2),
+        "Balance": round(balance, 2)
     })
 
 df = pd.DataFrame(rows)
@@ -91,24 +90,21 @@ st.metric("Total Profit", f"${balance - starting_balance:,.2f}")
 
 st.info(f"Current Tunis time: {now.strftime('%H:%M')} → Trades today counted dynamically based on thresholds")
 
-# ===== Graphs =====
+# ===== Analytics & Graphs using Streamlit native charts =====
 st.subheader("Analytics & Graphs")
 
 # 1️⃣ Balance Over Time
-fig_balance = px.line(df, x="Date", y="Balance ($)", title="Balance Growth Over Time")
-st.plotly_chart(fig_balance, use_container_width=True)
+st.line_chart(df.set_index("Date")["Balance"])
 
 # 2️⃣ Daily Profit
-fig_profit = px.bar(df, x="Date", y="Daily Profit ($)", title="Daily Profit per Day", color="Daily Profit ($)")
-st.plotly_chart(fig_profit, use_container_width=True)
+st.bar_chart(df.set_index("Date")["Daily Profit"])
 
 # 3️⃣ Trades per Day
-fig_trades = px.line(df, x="Date", y="Trades", title="Number of Trades per Day", markers=True)
-st.plotly_chart(fig_trades, use_container_width=True)
+st.line_chart(df.set_index("Date")["Trades"])
 
 # ===== Extra Analytics =====
 st.subheader("Extra Analytics")
-st.write(f"- Average Daily Profit: ${df['Daily Profit ($)'].mean():.2f}")
-st.write(f"- Maximum Daily Profit: ${df['Daily Profit ($)'].max():.2f}")
+st.write(f"- Average Daily Profit: ${df['Daily Profit'].mean():.2f}")
+st.write(f"- Maximum Daily Profit: ${df['Daily Profit'].max():.2f}")
 st.write(f"- Total Trades Projected: {df['Trades'].sum()}")
 st.write(f"- Average Trades per Day: {df['Trades'].mean():.2f}")
