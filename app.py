@@ -8,7 +8,7 @@ tz = pytz.timezone("Europe/Brussels")
 now = datetime.now(tz)
 
 # ===== App Title =====
-st.title("TradeCompound 💰🐔")
+st.title("Djeja Simulator 💰🐔")
 
 # ===== Inputs =====
 profit_percent_of_risk = st.number_input("Profit per Trade (% of Risk)", value=62.0, step=0.1)
