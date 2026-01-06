@@ -1,10 +1,10 @@
 import streamlit as st
 import pandas as pd
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 import pytz
 
 # ===== Timezone =====
-tz = pytz.timezone("Europe/Brussels")
+tz = pytz.timezone("Africa/Tunis")
 now = datetime.now(tz)
 
 # ===== App Title =====
@@ -14,31 +14,44 @@ st.title("Djeja Simulator 💰🐔")
 profit_percent_of_risk = st.number_input("Profit per Trade (% of Risk)", value=62.0, step=0.1)
 base_trades_per_day = st.number_input("Base Trades per Day", value=2, step=1)
 days = st.number_input("Number of Days", value=90, step=1)
-
-st.write("---")
-
 extra_trades_per_day = st.number_input("Extra Trades per Day", value=0, step=1)
 extra_trades_days = st.number_input("Extra Trades Duration (days)", value=0, step=1)
+mode = st.radio("Calculation Mode", ["Starting Balance ➜ Projection", "Target Profit ➜ Starting Balance"])
 
 st.write("---")
 
-mode = st.radio("Calculation Mode", ["Starting Balance ➜ Projection", "Target Profit ➜ Starting Balance"])
+# ===== Define trade time thresholds (Tunis time) =====
+# Each entry: (hour, minute) → trade active after this time
+trade_thresholds = [
+    time(13, 39),  # first base trade
+    time(18, 39),  # second base trade
+]
 
-# ===== Time Logic =====
-bonus_starts_today = now.hour < 20
-bonus_offset = 1 if bonus_starts_today else 2
+# Bonus trades (only for first N days)
+bonus_thresholds = [
+    time(18, 49),  # first bonus
+    time(18, 59),  # second bonus
+]
 
-st.info(
-    f"Current Belgium time: {now.strftime('%H:%M')} → "
-    f"Bonus starts on day {bonus_offset}"
-)
+# ===== Function to count trades today based on time =====
+def count_trades_today(day):
+    trades = 0
+    # Base trades
+    for t in trade_thresholds[:base_trades_per_day]:
+        if now.time() >= t:
+            trades += 1
+    # Bonus trades (only for first extra_trades_days)
+    if day <= extra_trades_days:
+        for t in bonus_thresholds[:extra_trades_per_day]:
+            if now.time() >= t:
+                trades += 1
+    return trades
 
 # ===== Growth Factor Calculation =====
 def compute_growth_factor():
     factor = 1.0
     for day in range(1, days + 1):
-        extra_today = extra_trades_per_day if bonus_offset <= day < bonus_offset + extra_trades_days else 0
-        trades_today = base_trades_per_day + extra_today
+        trades_today = count_trades_today(day)
         for _ in range(trades_today):
             factor *= (1 + 0.01 * (profit_percent_of_risk / 100))
     return factor
@@ -59,9 +72,7 @@ start_date = now.date()
 
 for day in range(1, days + 1):
     day_start = balance
-    extra_today = extra_trades_per_day if bonus_offset <= day < bonus_offset + extra_trades_days else 0
-    trades_today = base_trades_per_day + extra_today
-
+    trades_today = count_trades_today(day)
     for _ in range(trades_today):
         balance += balance * 0.01 * (profit_percent_of_risk / 100)
 
@@ -83,3 +94,5 @@ st.subheader("Summary")
 st.metric("Starting Balance", f"${starting_balance:,.2f}")
 st.metric("Final Balance", f"${balance:,.2f}")
 st.metric("Total Profit", f"${balance - starting_balance:,.2f}")
+
+st.info(f"Current Tunis time: {now.strftime('%H:%M')} → Trades today counted dynamically based on thresholds")
