@@ -1,4 +1,5 @@
 import streamlit as st
+from withdrawals import simulate_withdrawal
 import constants as const
 from calculator import compute_growth_factor, generate_projection
 from charts import display_charts
@@ -118,3 +119,28 @@ st.dataframe(df, use_container_width=True)
 display_charts(df)
 
 st.info("Current Tunis time → Trades today counted dynamically based on thresholds")
+
+st.write("---")
+st.subheader("Withdrawal Scenario")
+
+withdraw_percent = st.slider(
+    "Withdraw % of profit",
+    min_value=0,
+    max_value=100,
+    value=80
+) / 100
+
+withdraw_frequency = st.selectbox(
+    "Withdrawal frequency",
+    ["monthly", "biweekly", "quarterly"]
+)
+
+withdraw_df = simulate_withdrawal(df, withdraw_percent, withdraw_frequency)
+
+st.line_chart(withdraw_df.set_index("Date")["Balance ($)"])
+st.bar_chart(withdraw_df.set_index("Date")["Withdrawn ($)"])
+
+st.metric(
+    "Total Withdrawn",
+    f"${withdraw_df['Withdrawn ($)'].sum():,.2f}"
+)
