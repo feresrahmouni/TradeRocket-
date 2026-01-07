@@ -10,9 +10,6 @@ import pandas as pd
 st.title(f"Djeja Simulator {const.EMOJI_CHICKEN}{const.EMOJI_CASH}")
 st.write("---")
 
-
-st.write("---")
-
 # ====== Inputs ======
 st.subheader("Trading Inputs")
 
@@ -187,6 +184,7 @@ if withdraw_mode == "Fixed amount ($)":
         st.caption(f"≈ {implied_pct:.1f}% of total profit withdrawn")
 
 # ===== Footer =====
+st.write("---")
 col1, col2 = st.columns([1, 6])
 
 with col1:
