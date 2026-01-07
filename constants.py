@@ -5,12 +5,12 @@ APP_DESCRIPTION = "Daily trading compounding calculator with referral extra trad
 # ===== Default Trading Parameters =====
 DEFAULT_STARTING_BALANCE = 1000
 DEFAULT_PROFIT_PERCENT = 62.0
-DEFAULT_BASE_TRADES_PER_DAY = 2
+DEFAULT_BASE_TRADES = 2
 DEFAULT_DAYS = 52
 
 # ===== Default Bonus Trades =====
-DEFAULT_EXTRA_TRADES_PER_DAY = 0
-DEFAULT_EXTRA_TRADES_DAYS = 0
+DEFAULT_EXTRA_TRADES = 0
+DEFAULT_EXTRA_DAYS = 0
 
 # ===== Time Thresholds (Tunis time) =====
 # Base trades: count only after these times
