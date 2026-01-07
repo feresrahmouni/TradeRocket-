@@ -1,6 +1,4 @@
-Got you! Here’s a clean, complete README for your Djeja Simulator app. I’ve written it so it’s clear, explanatory, and includes all features including dynamic trades and projections.
 
-⸻
 
 Djeja Simulator 🐔💰
 
