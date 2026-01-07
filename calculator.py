@@ -50,3 +50,49 @@ def calculate_projection(
         })
 
     return projection
+    
+def compute_growth_factor(
+    days,
+    base_trades,
+    extra_trades,
+    extra_days,
+    profit_percent
+):
+    factor = 1.0
+    for day in range(days):
+        trades_today = base_trades
+        if day < extra_days:
+            trades_today += extra_trades
+
+        for _ in range(trades_today):
+            factor *= (1 + 0.01 * (profit_percent / 100))
+    return factor
+
+def generate_projection(
+    days,
+    starting_balance,
+    base_trades,
+    extra_trades,
+    extra_days,
+    profit_percent
+):
+    balance = starting_balance
+    rows = []
+
+    for day in range(1, days + 1):
+        day_start = balance
+        trades_today = base_trades
+        if day <= extra_days:
+            trades_today += extra_trades
+
+        for _ in range(trades_today):
+            balance += balance * 0.01 * (profit_percent / 100)
+
+        rows.append({
+            "Day": day,
+            "Trades": trades_today,
+            "Daily Profit ($)": round(balance - day_start, 2),
+            "Balance ($)": round(balance, 2)
+        })
+
+    return rows, balance
