@@ -8,13 +8,19 @@ import pandas as pd
 
 # ====== App Title ======
 st.title(f"Djeja Simulator {const.EMOJI_CHICKEN}{const.EMOJI_CASH}")
+st.write("---")
 
-# Smaller image
-st.image(
-    "quagmire.png",
-    caption="Quagmire",
-    width=180
-)
+# ===== Footer =====
+col1, col2 = st.columns([1, 6])
+
+with col1:
+    st.image(
+        "quagmire.png",
+        width=60  # very small
+    )
+
+with col2:
+    st.caption("Developed by Quagmire")
 
 st.write("---")
 
@@ -152,22 +158,6 @@ else:
     )
     withdraw_percent = None
 
-"""withdraw_percent = st.slider(
-    "Withdraw % of profit",
-    min_value=0,
-    max_value=100,
-    value=80
-) / 100
-
-withdraw_fixed_amount = st.number_input(
-    "Fixed withdrawal amount ($) (optional)",
-    value=0.0,
-    step=100.0,
-    min_value=0.0
-)
-
-if withdraw_fixed_amount == 0:
-    withdraw_fixed_amount = None"""
 
 withdraw_frequency = st.selectbox(
     "Withdrawal frequency",
@@ -207,10 +197,3 @@ if withdraw_mode == "Fixed amount ($)":
         implied_pct = withdraw_df["Withdrawn ($)"].sum() / total_profit * 100
         st.caption(f"≈ {implied_pct:.1f}% of total profit withdrawn")
      
-"""st.line_chart(withdraw_df.set_index("Date")["Balance ($)"])
-st.bar_chart(withdraw_df.set_index("Date")["Withdrawn ($)"])
-
-st.metric(
-    "Total Withdrawn",
-    f"${withdraw_df['Withdrawn ($)'].sum():,.2f}"
-)"""
