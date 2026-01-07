@@ -79,11 +79,12 @@ if mode == "Target Profit ➜ Starting Balance":
     starting_balance = target_profit / (growth_factor - 1)
 
 else:
-    starting_balance = st.number_input(
-        "Starting Balance ($)",
-        value=const.DEFAULT_STARTING_BALANCE,
-        step=100.0
-    )
+starting_balance = st.number_input(
+    "Starting Balance ($)",
+    value=float(const.DEFAULT_STARTING_BALANCE),
+    step=100.0,
+    min_value=0.0
+)
 
 # ====== Projection ======
 df, final_balance = generate_projection(
