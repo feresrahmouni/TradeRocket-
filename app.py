@@ -39,7 +39,7 @@ mode = st.radio("Calculation Mode", ["Starting Balance ➜ Projection", "Target 
 
 # ====== Handle Starting Balance / Target Profit ======
 if mode == "Target Profit ➜ Starting Balance":
-    target_profit = st.number_input("Target Total Profit ($)", value=10000.0, step=500.0)
+    target_profit = st.number_input("Target Total Profit ($)", value=1000.0, step=500.0)
     growth_factor = compute_growth_factor(
         days, base_trades_per_day, extra_trades_per_day, extra_trades_days, profit_percent_of_risk
     )
