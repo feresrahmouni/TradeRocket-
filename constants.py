@@ -9,8 +9,8 @@ DEFAULT_BASE_TRADES = 2
 DEFAULT_DAYS = 52
 
 # ===== Default Bonus Trades =====
-DEFAULT_EXTRA_TRADES = 0
-DEFAULT_EXTRA_DAYS = 0
+DEFAULT_EXTRA_TRADES = 2
+DEFAULT_EXTRA_DAYS = 4
 
 # ===== Time Thresholds (Tunis time) =====
 # Base trades: count only after these times
