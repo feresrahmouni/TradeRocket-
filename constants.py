@@ -26,8 +26,8 @@ BONUS_TRADE_THRESHOLDS = [
 ]
 
 # ===== Emojis / Icons =====
-EMOJI_BASE_TRADE = "💰"
-EMOJI_BONUS_TRADE = "🐔"
+EMOJI_CHICKEN = "🐔"
+EMOJI_CASH = "💰"
 EMOJI_APP = "🚀"
 
 # ===== Misc =====
