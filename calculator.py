@@ -6,7 +6,8 @@ def calculate_projection(
     base_trades_per_day: int,
     days: int,
     extra_trades_per_day: int = 0,
-    extra_trades_days: int = 0
+    extra_trades_days: int = 0,
+    start_date
 ):
     """
     Calculate daily projection of trading compounding.
@@ -24,7 +25,6 @@ def calculate_projection(
     """
 
     balance = starting_balance
-    start_date = datetime.today()
     projection = []
 
     for day in range(1, days + 1):
@@ -74,11 +74,11 @@ def generate_projection(
     base_trades,
     extra_trades,
     extra_days,
-    profit_percent
+    profit_percent,
+    start_date
 ):
     balance = starting_balance
     rows = []
-    start_date = datetime.today().date()
 
     for day in range(1, days + 1):
         day_start = balance
