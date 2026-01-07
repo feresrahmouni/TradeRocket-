@@ -1,5 +1,5 @@
 import streamlit as st
-from constants import *
+import constants as const
 from calculator import compute_growth_factor, generate_projection
 from charts import display_charts
 
