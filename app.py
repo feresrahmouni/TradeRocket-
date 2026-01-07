@@ -130,12 +130,26 @@ withdraw_percent = st.slider(
     value=80
 ) / 100
 
+withdraw_fixed_amount = st.number_input(
+    "Fixed withdrawal amount ($) (optional)",
+    value=0.0,
+    step=100.0,
+    min_value=0.0
+)
+
+if withdraw_fixed_amount == 0:
+    withdraw_fixed_amount = None
+
 withdraw_frequency = st.selectbox(
     "Withdrawal frequency",
     ["monthly", "biweekly", "quarterly"]
 )
-
-withdraw_df = simulate_withdrawal(df, withdraw_percent, withdraw_frequency)
+withdraw_df = simulate_withdrawal(
+    df,
+    withdraw_percent,
+    withdraw_frequency,
+    withdraw_fixed_amount
+)
 
 st.line_chart(withdraw_df.set_index("Date")["Balance ($)"])
 st.bar_chart(withdraw_df.set_index("Date")["Withdrawn ($)"])
