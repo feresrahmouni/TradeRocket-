@@ -18,6 +18,10 @@ def display_charts(data):
         st.warning("No data to display")
         return
 
+    # ---- Use Date as index if available ----
+    if "Date" in df.columns:
+        df = df.set_index("Date")
+
     st.subheader("Analytics & Graphs")
 
     # ===== Balance over time =====
