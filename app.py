@@ -20,20 +20,23 @@ st.subheader("Trading Inputs")
 
 profit_percent_of_risk = st.number_input(
     "Profit per Trade (% of Risk)",
-    value=const.DEFAULT_PROFIT_PERCENT,
-    step=0.1
+    value=float(const.DEFAULT_PROFIT_PERCENT),
+    step=0.1,
+    min_value=0.0
 )
 
 base_trades_per_day = st.number_input(
     "Base Trades per Day",
-    value=const.DEFAULT_BASE_TRADES,
-    step=1
+    value=int(const.DEFAULT_BASE_TRADES),
+    step=1,
+    min_value=0
 )
 
 days = st.number_input(
     "Number of Days to Project",
-    value=const.DEFAULT_DAYS,
-    step=1
+    value=int(const.DEFAULT_DAYS),
+    step=1,
+    min_value=1
 )
 
 st.write("---")
@@ -42,14 +45,16 @@ st.subheader("Bonus / Referral Trades")
 
 extra_trades_per_day = st.number_input(
     "Extra Trades per Day",
-    value=const.DEFAULT_EXTRA_TRADES,
-    step=1
+    value=int(const.DEFAULT_EXTRA_TRADES),
+    step=1,
+    min_value=0
 )
 
 extra_trades_days = st.number_input(
     "Number of Days with Extra Trades",
-    value=const.DEFAULT_EXTRA_DAYS,
-    step=1
+    value=int(const.DEFAULT_EXTRA_DAYS),
+    step=1,
+    min_value=0
 )
 
 st.write("---")
@@ -65,7 +70,8 @@ if mode == "Target Profit ➜ Starting Balance":
     target_profit = st.number_input(
         "Target Total Profit ($)",
         value=1000.0,
-        step=500.0
+        step=500.0,
+        min_value=0.0
     )
 
     growth_factor = compute_growth_factor(
@@ -79,12 +85,12 @@ if mode == "Target Profit ➜ Starting Balance":
     starting_balance = target_profit / (growth_factor - 1)
 
 else:
-starting_balance = st.number_input(
-    "Starting Balance ($)",
-    value=float(const.DEFAULT_STARTING_BALANCE),
-    step=100.0,
-    min_value=0.0
-)
+    starting_balance = st.number_input(
+        "Starting Balance ($)",
+        value=float(const.DEFAULT_STARTING_BALANCE),
+        step=100.0,
+        min_value=0.0
+    )
 
 # ====== Projection ======
 df, final_balance = generate_projection(
