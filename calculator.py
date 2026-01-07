@@ -78,6 +78,7 @@ def generate_projection(
 ):
     balance = starting_balance
     rows = []
+    start_date = datetime.today().date()
 
     for day in range(1, days + 1):
         day_start = balance
@@ -89,6 +90,7 @@ def generate_projection(
             balance += balance * 0.01 * (profit_percent / 100)
 
         rows.append({
+            "Date": start_date + timedelta(days=day - 1),
             "Day": day,
             "Trades": trades_today,
             "Daily Profit ($)": round(balance - day_start, 2),
