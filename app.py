@@ -3,6 +3,8 @@ from withdrawals import simulate_withdrawal
 import constants as const
 from calculator import compute_growth_factor, generate_projection
 from charts import display_charts
+import pandas as pd
+
 
 # ====== App Title ======
 st.title(f"Djeja Simulator {const.EMOJI_CHICKEN}{const.EMOJI_CASH}")
@@ -102,7 +104,12 @@ df, final_balance = generate_projection(
     extra_trades_days,
     profit_percent_of_risk
 )
+# ---- HARD NORMALIZATION (DO NOT REMOVE) ----
+if isinstance(df, tuple):
+    df = df[0]
 
+if not isinstance(df, pd.DataFrame):
+    df = pd.DataFrame(df)
 # ====== Summary ======
 st.subheader("Summary")
 st.metric("Starting Balance", f"${starting_balance:,.2f}")
@@ -145,7 +152,7 @@ else:
     )
     withdraw_percent = None
 
-withdraw_percent = st.slider(
+"""withdraw_percent = st.slider(
     "Withdraw % of profit",
     min_value=0,
     max_value=100,
@@ -160,7 +167,7 @@ withdraw_fixed_amount = st.number_input(
 )
 
 if withdraw_fixed_amount == 0:
-    withdraw_fixed_amount = None
+    withdraw_fixed_amount = None"""
 
 withdraw_frequency = st.selectbox(
     "Withdrawal frequency",
@@ -172,8 +179,8 @@ withdraw_df = simulate_withdrawal(
     withdraw_frequency,
     withdraw_fixed_amount
 )
+# ====== Withdrawal Summary ======
 st.subheader("Withdrawal Summary")
-# ====== Withdrawal Scenario ======
 st.metric(
     "Total Profit Generated",
     f"${df['Daily Profit ($)'].sum():,.2f}"
@@ -183,7 +190,7 @@ st.metric(
     "Total Withdrawn",
     f"${withdraw_df['Withdrawn ($)'].sum():,.2f}"
 )
-# ====== Withdrawal Scenario ======
+# ====== Withdrawal Charts ======
 st.subheader("Withdrawal Charts")
 
 st.line_chart(
@@ -199,11 +206,11 @@ if withdraw_mode == "Fixed amount ($)":
     if total_profit > 0:
         implied_pct = withdraw_df["Withdrawn ($)"].sum() / total_profit * 100
         st.caption(f"≈ {implied_pct:.1f}% of total profit withdrawn")
-# ====== Withdrawal Scenario ======        
-st.line_chart(withdraw_df.set_index("Date")["Balance ($)"])
+     
+"""st.line_chart(withdraw_df.set_index("Date")["Balance ($)"])
 st.bar_chart(withdraw_df.set_index("Date")["Withdrawn ($)"])
 
 st.metric(
     "Total Withdrawn",
     f"${withdraw_df['Withdrawn ($)'].sum():,.2f}"
-)
+)"""
