@@ -4,12 +4,11 @@ from calculator import compute_growth_factor, generate_projection
 from charts import display_charts
 
 # ====== App Title & Image ======
-import constants as const
-
 st.title(f"Djeja Simulator {const.EMOJI_CHICKEN}{const.EMOJI_CASH}")
+
 st.image(
-    "/quagmire.png",  
-    caption=f"Quagmire {const.EMOJI_QUAGMIRE}",
+    "quagmire.png",   # or "assets/quagmire.png" if you use a folder
+    caption="Quagmire",
     use_column_width=True
 )
 st.write("---")
