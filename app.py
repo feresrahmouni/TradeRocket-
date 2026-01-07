@@ -120,8 +120,30 @@ display_charts(df)
 
 st.info("Current Tunis time → Trades today counted dynamically based on thresholds")
 
+# ====== Withdrawal Scenario ======
 st.write("---")
 st.subheader("Withdrawal Scenario")
+
+withdraw_mode = st.radio(
+    "Withdrawal Mode",
+    ["Percentage of profit", "Fixed amount ($)"]
+)
+if withdraw_mode == "Percentage of profit":
+    withdraw_percent = st.slider(
+        "Withdraw % of accumulated profit",
+        min_value=0,
+        max_value=100,
+        value=80
+    ) / 100
+    withdraw_fixed_amount = None
+else:
+    withdraw_fixed_amount = st.number_input(
+        "Withdraw fixed amount ($)",
+        value=1200.0,
+        step=100.0,
+        min_value=0.0
+    )
+    withdraw_percent = None
 
 withdraw_percent = st.slider(
     "Withdraw % of profit",
@@ -150,7 +172,34 @@ withdraw_df = simulate_withdrawal(
     withdraw_frequency,
     withdraw_fixed_amount
 )
+st.subheader("Withdrawal Summary")
+# ====== Withdrawal Scenario ======
+st.metric(
+    "Total Profit Generated",
+    f"${df['Daily Profit ($)'].sum():,.2f}"
+)
 
+st.metric(
+    "Total Withdrawn",
+    f"${withdraw_df['Withdrawn ($)'].sum():,.2f}"
+)
+# ====== Withdrawal Scenario ======
+st.subheader("Withdrawal Charts")
+
+st.line_chart(
+    withdraw_df.set_index("Date")["Balance ($)"]
+)
+
+st.bar_chart(
+    withdraw_df.set_index("Date")["Withdrawn ($)"]
+)
+# ====== Withdrawal Scenario ======
+if withdraw_mode == "Fixed amount ($)":
+    total_profit = df["Daily Profit ($)"].sum()
+    if total_profit > 0:
+        implied_pct = withdraw_df["Withdrawn ($)"].sum() / total_profit * 100
+        st.caption(f"≈ {implied_pct:.1f}% of total profit withdrawn")
+# ====== Withdrawal Scenario ======        
 st.line_chart(withdraw_df.set_index("Date")["Balance ($)"])
 st.bar_chart(withdraw_df.set_index("Date")["Withdrawn ($)"])
 
