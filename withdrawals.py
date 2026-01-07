@@ -1,6 +1,13 @@
 import pandas as pd
 
 def simulate_withdrawal(df, withdraw_percent, frequency):
+    # 🔒 HARD NORMALIZATION (DO NOT REMOVE)
+    if isinstance(df, tuple):
+        df = df[0]
+
+    if not isinstance(df, pd.DataFrame):
+        df = pd.DataFrame(df)
+
     df = df.copy()
     df["Withdrawn ($)"] = 0.0
 
