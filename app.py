@@ -135,6 +135,7 @@ withdraw_frequency = st.selectbox(
     ["monthly", "biweekly", "quarterly"]
 )
 
+df = df.copy()
 withdraw_df = simulate_withdrawal(df, withdraw_percent, withdraw_frequency)
 
 st.line_chart(withdraw_df.set_index("Date")["Balance ($)"])
