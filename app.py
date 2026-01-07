@@ -6,7 +6,7 @@ from charts import display_charts
 # ====== App Title & Image ======
 st.title(f"Djeja Simulator {EMOJI_CHICKEN}{EMOJI_CASH}")
 st.image(
-    "assets/quagmire.png",  # put the image in your repo /assets folder
+    "/quagmire.png",  
     caption=f"Quagmire {EMOJI_QUAGMIRE}",
     use_column_width=True
 )
