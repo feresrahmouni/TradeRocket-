@@ -1,110 +1,72 @@
 import streamlit as st
-from datetime import datetime
-from calculator import calculate_projection
+from constants import *
+from calculator import compute_growth_factor, generate_projection
 from charts import display_charts
-from utils import count_trades_now
-import constants as const
-import pytz
 
-# ====== App Title ======
-st.title(const.APP_NAME)
-st.write(const.APP_DESCRIPTION)
+# ====== App Title & Image ======
+st.title(f"Djeja Simulator {EMOJI_CHICKEN}{EMOJI_CASH}")
+st.image(
+    "assets/quagmire.png",  # put the image in your repo /assets folder
+    caption=f"Quagmire {EMOJI_QUAGMIRE}",
+    use_column_width=True
+)
+st.write("---")
 
 # ====== Inputs ======
-st.subheader("Trading Parameters")
-starting_balance = st.number_input(
-    "Starting Balance ($)", 
-    value=const.DEFAULT_STARTING_BALANCE, 
-    step=100.0
-)
+st.subheader("Trading Inputs")
 profit_percent_of_risk = st.number_input(
-    "Profit per Trade (% of Risk)", 
-    value=const.DEFAULT_PROFIT_PERCENT, 
-    step=0.1
+    "Profit per Trade (% of Risk)", value=DEFAULT_PROFIT_PERCENT, step=0.1
 )
 base_trades_per_day = st.number_input(
-    "Base Trades per Day", 
-    value=const.DEFAULT_BASE_TRADES_PER_DAY, 
-    step=1
+    "Base Trades per Day", value=DEFAULT_BASE_TRADES, step=1
 )
-days = st.number_input(
-    "Number of Days to Project", 
-    value=const.DEFAULT_DAYS, 
-    step=1
-)
+days = st.number_input("Number of Days to Project", value=DEFAULT_DAYS, step=1)
 
 st.write("---")
 
-st.subheader("Referral / Bonus Trades (optional)")
+st.subheader("Bonus / Referral Trades")
 extra_trades_per_day = st.number_input(
-    "Extra Trades per Day", 
-    value=const.DEFAULT_EXTRA_TRADES_PER_DAY, 
-    step=1
+    "Extra Trades per Day", value=DEFAULT_EXTRA_TRADES, step=1
 )
 extra_trades_days = st.number_input(
-    "Number of Days with Extra Trades", 
-    value=const.DEFAULT_EXTRA_TRADES_DAYS, 
-    step=1
+    "Number of Days with Extra Trades", value=DEFAULT_EXTRA_DAYS, step=1
 )
 
 st.write("---")
 
-mode = st.radio(
-    "Calculation Mode", 
-    ["Starting Balance ➜ Projection", "Target Profit ➜ Starting Balance"]
-)
+# ====== Calculation Mode ======
+mode = st.radio("Calculation Mode", ["Starting Balance ➜ Projection", "Target Profit ➜ Starting Balance"])
+
+# ====== Handle Starting Balance / Target Profit ======
+if mode == "Target Profit ➜ Starting Balance":
+    target_profit = st.number_input("Target Total Profit ($)", value=10000.0, step=500.0)
+    growth_factor = compute_growth_factor(
+        days, base_trades_per_day, extra_trades_per_day, extra_trades_days, profit_percent_of_risk
+    )
+    starting_balance = target_profit / (growth_factor - 1)
+else:
+    starting_balance = st.number_input(
+        "Starting Balance ($)", value=DEFAULT_STARTING_BALANCE, step=100.0
+    )
 
 # ====== Projection ======
-projection = []
-
-if mode == "Starting Balance ➜ Projection":
-    # Full projection for all days
-    projection = calculate_projection(
-        starting_balance=starting_balance,
-        profit_percent_of_risk=profit_percent_of_risk,
-        base_trades_per_day=base_trades_per_day,
-        days=days,
-        extra_trades_per_day=extra_trades_per_day,
-        extra_trades_days=extra_trades_days
-    )
-
-else:
-    # Target profit mode → estimate starting balance needed
-    target_profit = st.number_input("Target Total Profit ($)", value=10000.0, step=500.0)
-    projection_temp = calculate_projection(
-        starting_balance=1,
-        profit_percent_of_risk=profit_percent_of_risk,
-        base_trades_per_day=base_trades_per_day,
-        days=days,
-        extra_trades_per_day=extra_trades_per_day,
-        extra_trades_days=extra_trades_days
-    )
-    final_balance_temp = projection_temp[-1]["Balance ($)"]
-    starting_balance_needed = target_profit / (final_balance_temp - 1)
-    st.write(f"Estimated starting balance needed: {starting_balance_needed:,.2f}")
-    projection = calculate_projection(
-        starting_balance=starting_balance_needed,
-        profit_percent_of_risk=profit_percent_of_risk,
-        base_trades_per_day=base_trades_per_day,
-        days=days,
-        extra_trades_per_day=extra_trades_per_day,
-        extra_trades_days=extra_trades_days
-    )
-
-# ====== Dynamic Trade Counting for Today ======
-tz = pytz.timezone("Africa/Tunis")
-now = datetime.now(tz)
-today_dynamic_trades = count_trades_now(
-    base_trades_per_day=base_trades_per_day,
-    extra_trades_per_day=extra_trades_per_day,
-    extra_trades_days=extra_trades_days,
-    day_number=1  # today is day 1
+df, final_balance = generate_projection(
+    days, starting_balance, base_trades_per_day, extra_trades_per_day, extra_trades_days, profit_percent_of_risk
 )
 
-st.info(
-    f"Current Tunis time: {now.strftime('%H:%M')} → "
-    f"Trades counted today dynamically: {today_dynamic_trades}"
-)
+# ====== Summary (Top) ======
+st.subheader("Summary")
+st.metric("Starting Balance", f"${starting_balance:,.2f}")
+st.metric("Final Balance", f"${final_balance:,.2f}")
+st.metric("Total Profit", f"${final_balance - starting_balance:,.2f}")
 
-# ====== Display Charts and Analytics ======
-display_charts(projection)
+st.write("---")
+
+# ====== Projection Table ======
+st.subheader("Projection Table")
+st.dataframe(df, use_container_width=True)
+
+# ====== Analytics & Charts ======
+display_charts(df)
+
+st.info("Current Tunis time → Trades today counted dynamically based on thresholds")
