@@ -7,7 +7,7 @@ from charts import display_charts
 st.title(f"Djeja Simulator {const.EMOJI_CHICKEN}{const.EMOJI_CASH}")
 
 st.image(
-    "quagmire.png",   # or "assets/quagmire.png" if you use a folder
+    "quagmire.png",  
     caption="Quagmire",
     use_column_width=True
 )
