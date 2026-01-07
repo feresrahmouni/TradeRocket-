@@ -4,7 +4,7 @@ from calculator import compute_growth_factor, generate_projection
 from charts import display_charts
 
 # ====== App Title & Image ======
-st.title(f"Djeja Simulator {const.EMOJI_BONUS_TRADE}{const.EMOJI_BASE_TRADE")
+st.title(f"Djeja Simulator {const.EMOJI_BONUS_TRADE}{const.EMOJI_BASE_TRADE}")
 st.image(
     "quagmire.png",  
     caption="Quagmire",
