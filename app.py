@@ -10,17 +10,6 @@ import pandas as pd
 st.title(f"Djeja Simulator {const.EMOJI_CHICKEN}{const.EMOJI_CASH}")
 st.write("---")
 
-# ===== Footer =====
-col1, col2 = st.columns([1, 6])
-
-with col1:
-    st.image(
-        "quagmire.png",
-        width=60  # very small
-    )
-
-with col2:
-    st.caption("Developed by Quagmire")
 
 st.write("---")
 
@@ -196,4 +185,16 @@ if withdraw_mode == "Fixed amount ($)":
     if total_profit > 0:
         implied_pct = withdraw_df["Withdrawn ($)"].sum() / total_profit * 100
         st.caption(f"≈ {implied_pct:.1f}% of total profit withdrawn")
+
+# ===== Footer =====
+col1, col2 = st.columns([1, 6])
+
+with col1:
+    st.image(
+        "quagmire.png",
+        width=60  # very small
+    )
+
+with col2:
+    st.caption("Developed by Quagmire")
      
