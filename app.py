@@ -9,7 +9,7 @@ import constants as const
 st.title(f"Djeja Simulator {const.EMOJI_CHICKEN}{const.EMOJI_CASH}")
 st.image(
     "/quagmire.png",  
-    caption=f"Quagmire {EMOJI_QUAGMIRE}",
+    caption=f"Quagmire {const.EMOJI_QUAGMIRE}",
     use_column_width=True
 )
 st.write("---")
