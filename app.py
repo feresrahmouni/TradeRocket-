@@ -4,13 +4,26 @@ import constants as const
 from calculator import compute_growth_factor, generate_projection
 from charts import display_charts
 import pandas as pd
+from datetime import date
 
 
 # ====== App Title ======
 st.title(f"Djeja Simulator {const.EMOJI_CHICKEN}{const.EMOJI_CASH}")
+# ====== Start Date ======
 st.write("---")
+st.subheader("Start Date")
 
+use_today = st.checkbox("Start from today", value=True)
+
+if use_today:
+    start_date = date.today()
+else:
+    start_date = st.date_input(
+        "Select start date",
+        value=date.today()
+    )
 # ====== Inputs ======
+st.write("---")
 st.subheader("Trading Inputs")
 
 profit_percent_of_risk = st.number_input(
@@ -94,7 +107,8 @@ df, final_balance = generate_projection(
     base_trades_per_day,
     extra_trades_per_day,
     extra_trades_days,
-    profit_percent_of_risk
+    profit_percent_of_risk,
+    start_date
 )
 # ---- HARD NORMALIZATION (DO NOT REMOVE) ----
 if isinstance(df, tuple):
