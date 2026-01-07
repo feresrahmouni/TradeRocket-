@@ -1,6 +1,11 @@
 import pandas as pd
 
-def simulate_withdrawal(df, withdraw_percent, frequency):
+def simulate_withdrawal(
+    df,
+    withdraw_percent,
+    frequency,
+    withdraw_fixed_amount=None
+):
     # ---- normalize input ----
     if isinstance(df, tuple):
         df = df[0]
@@ -11,7 +16,7 @@ def simulate_withdrawal(df, withdraw_percent, frequency):
     df = df.copy()
     df["Withdrawn ($)"] = 0.0
 
-    # ---- define frequency window ----
+    # ---- frequency window ----
     if frequency == "monthly":
         window = 30
     elif frequency == "biweekly":
@@ -27,11 +32,16 @@ def simulate_withdrawal(df, withdraw_percent, frequency):
         daily_profit = df.loc[i, "Daily Profit ($)"]
         accumulated_profit += daily_profit
 
-        # withdrawal day
+        # withdrawal moment
         if window and (i + 1) % window == 0:
-            withdraw = accumulated_profit * withdraw_percent
-            df.loc[i, "Withdrawn ($)"] = withdraw
+            if withdraw_fixed_amount is not None:
+                withdraw = min(withdraw_fixed_amount, accumulated_profit)
+            else:
+                withdraw = accumulated_profit * withdraw_percent
+
+            df.loc[i, "Withdrawn ($)"] = round(withdraw, 2)
             df.loc[i, "Balance ($)"] -= withdraw
+
             accumulated_profit = 0.0  # reset after withdrawal
 
     return df
