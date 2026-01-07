@@ -1,15 +1,22 @@
 import streamlit as st
 import pandas as pd
 
-def display_charts(df: pd.DataFrame):
+def display_charts(data):
     """
-    Display charts and analytics for the projection.
-    Expects a DataFrame with columns:
-    - El bonus arjaa ghodwa (day)
-    - Trades
-    - Daily Profit ($)
-    - Balance ($)
+    Accepts either:
+    - pandas DataFrame
+    - OR list of dicts
     """
+
+    # ---- Normalize input to DataFrame ----
+    if isinstance(data, pd.DataFrame):
+        df = data.copy()
+    else:
+        df = pd.DataFrame(data)
+
+    if df.empty:
+        st.warning("No data to display")
+        return
 
     st.subheader("Analytics & Graphs")
 
@@ -17,19 +24,19 @@ def display_charts(df: pd.DataFrame):
     if "Balance ($)" in df.columns:
         st.line_chart(df["Balance ($)"])
     else:
-        st.warning("Balance data not found")
+        st.warning("Missing column: Balance ($)")
 
-    # ===== Daily profit =====
+    # ===== Daily Profit =====
     if "Daily Profit ($)" in df.columns:
         st.bar_chart(df["Daily Profit ($)"])
     else:
-        st.warning("Daily profit data not found")
+        st.warning("Missing column: Daily Profit ($)")
 
     # ===== Trades per day =====
     if "Trades" in df.columns:
         st.line_chart(df["Trades"])
     else:
-        st.warning("Trades data not found")
+        st.warning("Missing column: Trades")
 
     # ===== Extra analytics =====
     st.subheader("Extra Analytics")
